@@ -17,7 +17,8 @@ class FunnelGraph {
         this.labels = FunnelGraph.getLabels(options);
         this.subLabels = FunnelGraph.getSubLabels(options);
         this.values = FunnelGraph.getValues(options);
-        this.percentages = this.createPercentages();
+        this.total = options.total;
+        this.percentages = this.createPercentages(this.total);
         this.colors = options.data.colors || getDefaultColors(this.is2d() ? this.getSubDataSize() : 2);
         this.displayPercent = options.displayPercent || false;
         this.data = options.data;
@@ -317,7 +318,7 @@ class FunnelGraph {
         return percentages;
     }
 
-    createPercentages() {
+    createPercentages(total) {
         let values = [];
 
         if (this.is2d()) {
@@ -327,7 +328,7 @@ class FunnelGraph {
         }
 
         const max = Math.max(...values);
-        return values.map(value => (value === 0 ? 0 : roundPoint(value * 100 / max)));
+        return values.map(value => (value === 0 ? 0 : roundPoint(value * 100 / (total ? total : max))));
     }
 
     applyGradient(svg, path, colors, index) {
@@ -624,7 +625,7 @@ class FunnelGraph {
             }
             this.drawPaths();
         }
-        this.percentages = this.createPercentages();
+        this.percentages = this.createPercentages(this.total);
 
         this.addLabels();
 
