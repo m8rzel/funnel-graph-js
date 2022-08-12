@@ -171,9 +171,10 @@ function () {
     this.labels = FunnelGraph.getLabels(options);
     this.subLabels = FunnelGraph.getSubLabels(options);
     this.values = FunnelGraph.getValues(options);
-    this.percentages = this.createPercentages();
     this.colors = options.data.colors || (0, _graph.getDefaultColors)(this.is2d() ? this.getSubDataSize() : 2);
     this.displayPercent = options.displayPercent || false;
+    this.total = options.total || 0,
+    this.percentages = this.createPercentages(this.total);
     this.data = options.data;
     this.height = options.height;
     this.width = options.width;
@@ -453,7 +454,7 @@ function () {
     }
   }, {
     key: "createPercentages",
-    value: function createPercentages() {
+    value: function createPercentages(total) {
       var values = [];
 
       if (this.is2d()) {
@@ -461,10 +462,10 @@ function () {
       } else {
         values = _toConsumableArray(this.values);
       }
-
+      console.log("Funnel", total)
       var max = Math.max.apply(Math, _toConsumableArray(values));
       return values.map(function (value) {
-        return value === 0 ? 0 : (0, _number.roundPoint)(value * 100 / max);
+        return value === 0 ? 0 : (0, _number.roundPoint)(value * 100 / (total ? total : max));
       });
     }
   }, {
@@ -781,7 +782,7 @@ function () {
         this.drawPaths();
       }
 
-      this.percentages = this.createPercentages();
+      this.percentages = this.createPercentages(this.total);
       this.addLabels();
 
       if (typeof d.subLabels !== 'undefined') {
